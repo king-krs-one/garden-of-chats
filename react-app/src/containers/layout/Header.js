@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { Dialog } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Link } from 'react-router-dom'
 
 import Logo from '../../assets/images/logo.png'
 
@@ -30,15 +31,11 @@ function Header(props) {
         </div>
         <div className="hidden lg:flex lg:gap-x-12">
           {navigation.map((item) => (
-            <a key={item.name} href={item.href} className="text-sm font-semibold leading-6">
-              {item.name}
-            </a>
+            <Link key={item.name} to={item.href} className='menuItem text-sm font-semibold leading-6'>{item.name}</Link>
           ))}
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <a href="#" className="text-sm font-semibold leading-6">
-            Log in <span aria-hidden="true">&rarr;</span>
-          </a>
+          <Link to="/login" className='menuItem text-sm font-semibold leading-6'>Sign in</Link>
         </div>
       </nav>
       <SidePanel navigation={navigation} setIsOpen={setMobileMenuOpen} isOpen={mobileMenuOpen} />
@@ -71,22 +68,11 @@ function SidePanel(props) {
           <div className="-my-6 divide-y divide-gray-500/10">
             <div className="space-y-2 py-6">
               {navigation.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="block text-base font-semibold leading-7"
-                >
-                  {item.name}
-                </a>
+                <Link key={item.name} to={item.href} className='menuItem block text-base font-semibold leading-7'>{item.name}</Link>
               ))}
             </div>
             <div className="py-6">
-              <a
-                href="#"
-                className="block text-base font-semibold leading-7"
-              >
-                Log in
-              </a>
+              <Link to="/login" className='menuItem block text-base font-semibold leading-7'>Sign In</Link>
             </div>
           </div>
         </div>

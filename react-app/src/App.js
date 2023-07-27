@@ -1,6 +1,8 @@
 
 import './App.css';
 import Header from './containers/layout/Header';
+import { Route, Routes } from 'react-router-dom';
+import { Home, Chat, Contact, Login, Profile } from './containers/pages'
 
 
 const navigation = [
@@ -19,7 +21,13 @@ function App() {
       <nav></nav>
       <main>
         <div className='container mx-auto p-4'>
-          Page Content
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/login" element={<Login />} />
+          </Routes>
         </div>
       </main>
       <footer></footer>
