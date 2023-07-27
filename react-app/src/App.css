@@ -2,18 +2,70 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+
+/* App Header */
+.App-header {
+  background-color: #333;
+  border-bottom: 1px solid #dedede;
 }
 
-.App-header {
-  /* background-color: #282c34;
-  min-height: 100vh;
+.App-logo {}
+
+.App-menu {
+  font-size: 16px;
+}
+
+
+/* Menu items default */
+.menuItem {
+  display: inline-block;
+  color: wheat;
+}
+
+.menuItem:hover {
+  color: white;
+}
+
+
+/* App Panel */
+.App-panel {}
+
+.App-panel-open svg {
+  color: wheat;}
+
+.App-panel-close svg {
+  color: darkslategrey;
+}
+
+.App-panel-header {
+  margin: -1rem;
+  padding: 1rem;
+  background-color: aliceblue;
+}
+
+.App-panel-menu {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white; */
+  flex-wrap: wrap;
+}
+
+.App-panel-menu .menuItem {
+  width: 50%;
+  font-size: 16px;
+  line-height: 2rem;
+  color: darkslategrey;
+}
+
+.App-panel-menu .menuItem:hover {
+  color: darkgray;
+}
+
+
+/* Content */
+
+.divider {
+  width: 100%;
+  margin: 1rem 0;
+  border: 0;
+  border-top: 1px solid lightgray;
+  opacity: .25;
 }
