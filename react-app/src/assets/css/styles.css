@@ -11,6 +11,19 @@
   outline:none;
 }
 
+.btn {
+  background-color: gray;
+  color: white;
+  padding: .25rem 1rem;
+  line-height: 1.75rem;
+  border-radius: .25rem;
+}
+
+.btn-blue {
+  color: white;
+  background-color: dodgerblue;
+}
+
 /* Content */
 
 .divider {
