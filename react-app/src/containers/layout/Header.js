@@ -10,7 +10,7 @@ import LogoTextWhite from '../../assets/images/logo_text_white.png'
 
 function Header(props) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const { navigation } = props
+  const { navigation, userSession } = props
 
   return (
     <header className="App-header sticky inset-x-0 top-0 z-50">
@@ -42,7 +42,14 @@ function Header(props) {
         </div>
         {/* App Profile */}
         <div className="App-profile hidden lg:flex lg:flex-1 lg:justify-end">
-          <Link to="/login" className='menuItem text-sm font-semibold leading-6'>Sign in</Link>
+          {userSession ?
+            <>
+              <div className='menuItem mr-4'>{userSession.username}</div>
+              <Link to="/logout" className='menuItem text-sm font-semibold leading-6'>Sign Out</Link>
+            </>
+            :
+            <Link to="/login" className='menuItem text-sm font-semibold leading-6'>Sign In</Link>
+          }
         </div>
       </nav>
       <SidePanel navigation={navigation} setIsOpen={setMobileMenuOpen} isOpen={mobileMenuOpen} />
