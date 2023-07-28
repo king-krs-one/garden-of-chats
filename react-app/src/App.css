@@ -1,7 +1,11 @@
-.App {
-  text-align: center;
+
+#root {
+  height: 100vh;
 }
 
+.App {
+  text-align: left;
+}
 
 /* App Header */
 .App-header {
@@ -26,6 +30,10 @@
   color: white;
 }
 
+/* App Main */
+.App-main {
+  overflow: auto;
+}
 
 /* App Panel */
 .App-panel {}
@@ -57,15 +65,4 @@
 
 .App-panel-menu .menuItem:hover {
   color: darkgray;
-}
-
-
-/* Content */
-
-.divider {
-  width: 100%;
-  margin: 1rem 0;
-  border: 0;
-  border-top: 1px solid lightgray;
-  opacity: .25;
 }

@@ -17,7 +17,7 @@ function Header(props) {
       <nav className="flex items-center justify-between px-4 py-2 lg:px-4" aria-label="Global">
         {/* Header Logo */}
         <div className="App-logo flex lg:flex-1">
-          <a href="#" className="-m-1.5 p-1.5">
+          <a href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Garden of Chats</span>
             <img className="h-10 w-auto inline-block" src={Logo} alt="" />
             <img className="h-8 w-auto inline-block pl-2 align-bottom" src={LogoTextWhite} alt="" />
