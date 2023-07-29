@@ -36,11 +36,15 @@
 }
 
 .alert-success {
-  background-color: greenyellow;
+  background-color: darkkhaki;
 }
 
 .alert-warning {
-  background-color: orange;
+  background-color: sandybrown;
+}
+
+.alert-error {
+  background-color: salmon;
 }
 
 /* Content */
