@@ -1,3 +1,4 @@
+import { useState } from "react";
 
 const users = [
   {
@@ -50,6 +51,28 @@ const messages = [
 ]
 
 function Chat() {
+  const [chatMessage, setChatMessage] = useState("")
+  const [chatHistory, setChatHistory] = useState(messages)
+
+  const onChatMessageChange = (e) => {
+    setChatMessage(e.target.value)
+  }
+  const onChatMessageEnter = (e) => {
+    if (e.key === "Enter" && e.shiftKey == false) {
+      e.preventDefault();
+      console.log(e.target.value);
+      setChatHistory([...chatHistory, {
+        key: chatHistory.length,
+        user: users[1],
+        time: "14:26",
+        date: "2023-07-27",
+        text: e.target.value
+      }])
+      setChatMessage("")
+      // return console.log(e.target.value);
+    }
+  }
+
   return (
     <div className="Chat flex w-full min-h-full">
       {/* Chat Container */}
@@ -81,7 +104,7 @@ function Chat() {
         {/* Chat Window */}
         <div className="Chat-window w-full h-full px-5 flex flex-col justify-between">
           <div className="Chat-messages flex flex-col mt-5">
-            {messages.map((item, index) => {
+            {chatHistory.map((item, index) => {
               const classNameContainer = item.user.isLoggedIn ? "flex flex-row-reverse Message-private lg:ml-24" : "flex flex-row lg:mr-24"
               // const classNameMessage =  item.user.isLoggedIn ? "lg:ml-24" : "lg:mr-24"
               return (
@@ -99,7 +122,7 @@ function Chat() {
             })}
           </div>
           <div className="Chat-input">
-            <textarea className="input-field" rows="3"></textarea>
+            <textarea value={chatMessage} onChange={onChatMessageChange} className="input-field" rows="3" onKeyPress={onChatMessageEnter} ></textarea>
           </div>
         </div>
       </div>

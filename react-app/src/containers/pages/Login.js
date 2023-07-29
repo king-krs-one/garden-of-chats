@@ -95,7 +95,6 @@ function RegisterForm(props) {
         "username": username,
         "password": password,
       });
-      debugger
       props.handleRegister({
         message: {
           type: "success",
