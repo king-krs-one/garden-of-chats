@@ -1,7 +1,9 @@
 function Profile() {
   return (
-    <div>
-      <h1>Profile</h1>
+    <div className="flex w-full min-h-full">
+      <div className="container mx-auto p-4">
+        <h2 className="text-center">Profile</h2>
+      </div>
     </div>
   )
 }

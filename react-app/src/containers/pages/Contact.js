@@ -1,7 +1,9 @@
 function Contact() {
   return (
-    <div>
-      <h1>Contact</h1>
+    <div className="flex w-full min-h-full">
+      <div className="container mx-auto p-4">
+        <h2 className="text-center">Contact</h2>
+      </div>
     </div>
   )
 }
