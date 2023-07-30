@@ -1,4 +1,4 @@
-function Home(props) {
+function Home() {
   return (
     <div className="flex flex-col w-full min-h-full">
       <div className="container mx-auto p-4">
