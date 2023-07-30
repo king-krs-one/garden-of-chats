@@ -8,6 +8,9 @@ const jwt = require('jsonwebtoken');
 const verifyToken = require('./authMiddleware');
 
 const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http); // Import Socket.IO and create an instance
+
 const port = 5000;
 
 let users = [];
@@ -80,7 +83,9 @@ app.post('/logout', (req, res) => {
   
   if (username) {
     userIndex = users.findIndex(user => user.username === username)
-    users[userIndex].online = false
+    if (users[userIndex]){
+      users[userIndex].online = false
+    }
   }
 
   // Clear the JWT token to log out the user
@@ -115,7 +120,7 @@ app.get('/api/chat-messages', (req, res) => {
 
 // Send Message from Chat
 app.post('/api/send-message', verifyToken, (req, res) => {
-  console.log(req.user)
+  // console.log(req.user)
   const { message } = req.body;
   const user = users.find((u) => u.id === req.user.id);
   
@@ -141,6 +146,29 @@ app.post('/api/send-message', verifyToken, (req, res) => {
   return res.status(200).json({ message: 'Message sent successfully' });
 });
 
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+// WebSockets (Socket.IO) code
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  // Handle chat messages
+  socket.on('chatMessage', (data) => {
+    console.log("received message")
+    // Broadcast the received message to all connected clients (except the sender)
+    socket.broadcast.emit('chatMessage', data);
+  });
+
+  // Handle user disconnection
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+  });
 });
+
+
+// Start the server with WebSocket support
+http.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
+
+// app.listen(port, () => {
+//   console.log(`Server running on http://localhost:${port}`);
+// });

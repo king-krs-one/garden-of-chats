@@ -1,29 +1,53 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { getUsers, getMessages, sendMessage } from "../../Ajax";
+import io from 'socket.io-client';
 
 function Chat(props) {
   const [username, setUsername] = useState(props.session ? props.session.username : null)
   const [chatUsers, setChatUsers] = useState([])
   const [chatMessage, setChatMessage] = useState("")
   const [chatHistory, setChatHistory] = useState([])
+  const socket = io('http://localhost:5000'); // Connect to the WebSocket server
 
   // Get users and messages
   useEffect(() => {
     getUsers(setChatUsers)
     getMessages(username, setChatHistory)
-
   }, []);
 
-  const onChatMessageChange = (e) => {
+
+  // useEffect to make a connection to WebSocket 
+  useEffect(() => {
+    console.log("Effect for connecting to socket")
+    // Listen for incoming chat messages from the server
+    socket.on('chatMessage', (data) => {
+      console.log('received chat message from socket')
+      setChatHistory((prevMessages) => [...prevMessages, data]);
+    });
+
+    // Clean up the WebSocket connection on unmount
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  const updateChatMessage = (e) => {
     setChatMessage(e.target.value)
   }
 
   // Textarea send message
-  const onChatMessageEnter = (e) => {
+  const sendChatMessage = (e) => {
     // Check if the user pressed enter and prevent default
     if (e.key === "Enter" && e.shiftKey == false) {
       e.preventDefault();
+
+      socket.emit('chatMessage', {
+        user: username, // Replace with the actual username or user data
+        message: e.target.value,
+        timestamp: new Date().toISOString(),
+      });
+
+      console.log('socket emit chat message')
 
       sendMessage(e.target.value, username, setChatMessage, setChatHistory)
     }
@@ -43,7 +67,6 @@ function Chat(props) {
           {/* Chat List User */}
           <div className="Chat-list-user">
             {chatUsers.map((user, index) => {
-              debugger
               return (
                 <div key={user.id} className={`Chat-user flex`}>
                   <img className="Chat-user-image" src={ user.online ? "../../media/images/profiles/ava.png" : "../../media/images/profiles/una.png"} />
@@ -66,7 +89,6 @@ function Chat(props) {
               const user = chatUsers.find(user => user.id === item.userId)
               const classNameContainer = item.user && item.user.isLoggedIn ? "flex flex-row-reverse Message-private lg:ml-24" : "flex flex-row lg:mr-24"
               // const classNameMessage =  item.user.isLoggedIn ? "lg:ml-24" : "lg:mr-24"
-              debugger
               return (
                 <div key={item.id} className={`Message-container ${classNameContainer}`}>
                   <img className="Message-user-image hidden lg:flex" src={item.user.isLoggedIn ? "../../media/images/profiles/ava.png" :"../../media/images/profiles/una.png" } />
@@ -82,7 +104,7 @@ function Chat(props) {
             })}
           </div>
           <div className="Chat-input">
-            <textarea value={chatMessage} onChange={onChatMessageChange} className="input-field" rows="3" onKeyPress={onChatMessageEnter} ></textarea>
+            <textarea value={chatMessage} onChange={updateChatMessage} className="input-field" rows="3" onKeyPress={sendChatMessage} ></textarea>
           </div>
         </div>
       </div>
