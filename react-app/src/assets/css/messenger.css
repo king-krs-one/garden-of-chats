@@ -18,12 +18,30 @@
   padding: .25rem;
 }
 
+.Chat-user-online,
+.Chat-user-offline {
+  height: 25px;
+  width: 25px;
+  background-color: #bbb;
+  border-radius: 50%;
+  /* display: inline-block; */
+  float: right
+}
+
+.Chat-user-online {
+  background-color: chartreuse;
+}
+
 .Chat-sidebar {
   flex: 0 0 300px;
 }
 
 .Chat-input {
   padding: 1rem 0;
+}
+
+.Chat-messages {
+  overflow: auto;
 }
 
 /* Messages */

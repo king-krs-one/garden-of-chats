@@ -25,28 +25,27 @@ function LoginForm(props) {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/login', {
+      const response = await axios.post('http://localhost:5000/login', {
         username,
         password,
       });
 
       const { message, token } = response.data;
 
+      // Store the token in local storage or a more secure method like cookies
+      localStorage.setItem("token", token);
+      localStorage.setItem("session", JSON.stringify({username, token}));
+
       props.handleLogin({
-        username, password, message: {
+        username, password, token, message: {
           type: "success",
           status: response.status,
           text: message
         }
       });
 
-      // Store the token in local storage or a more secure method like cookies
-      localStorage.setItem('token', token);
-
       navigate('/');
     } catch (error) {
-      // setMessage('Login failed');
-
       props.handleLogin({
         username, password, message: {
           type: "error",

@@ -1,0 +1,46 @@
+{
+  "users": [
+    {
+      "id": 0,
+      "name": "Ava Nickels",
+      "color": "bg-sky-400",
+      "image": "../../media/images/profiles/ava.png"
+    },
+    {
+      "id": 1,
+      "name": "Una Nickels",
+      "color": "bg-yellow-500",
+      "image": "../../media/images/profiles/una.png"
+    }
+  ],
+  "messages": [
+    {
+      "id": 0,
+      "userId": 0,
+      "time": "13:34",
+      "date": "2023-07-27",
+      "text": "Hello there"
+    },
+    {
+      "id": 1,
+      "userId": 1,
+      "time": "13:42",
+      "date": "2023-07-27",
+      "text": "Good Afternoon, how are you ?"
+    },
+    {
+      "id": 2,
+      "userId": 0,
+      "time": "14:01",
+      "date": "2023-07-27",
+      "text": "I am great, how are you ?"
+    },
+    {
+      "id": 3,
+      "userId": 1,
+      "time": "14:24",
+      "date": "2023-07-27",
+      "text": "Thanks, I am fine too"
+    }
+  ]
+}

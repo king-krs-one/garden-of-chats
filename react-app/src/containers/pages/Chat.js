@@ -1,80 +1,81 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-const users = [
-  {
-    key: 1,
-    name: "Ava Nickels",
-    color: "bg-sky-400",
-    isOnline: true,
-    isLoggedIn: true,
-    image: require("../../media/images/profiles/ava.png"),
-  },
-  {
-    key: 2,
-    name: "Una Nickels",
-    color: "bg-yellow-500",
-    isOnline: true,
-    isLoggedIn: false,
-    image: require("../../media/images/profiles/una.png"),
-  }
-]
-
-const messages = [
-  {
-    key: 1,
-    user: users[0],
-    time: "13:34",
-    date: "2023-07-27",
-    text: "Hello there"
-  },
-  {
-    key: 2,
-    user: users[1],
-    time: "13:42",
-    date: "2023-07-27",
-    text: "Good Afternoon, how are you ?"
-  },
-  {
-    key: 3,
-    user: users[0],
-    time: "14:01",
-    date: "2023-07-27",
-    text: "I am great, how are you ?"
-  },
-  {
-    key: 4,
-    user: users[1],
-    time: "14:24",
-    date: "2023-07-27",
-    text: "Thanks, I am fine too"
-  }
-]
-
-function Chat() {
+function Chat(props) {
+  const [username, setUsername] = useState(props.session ? props.session.username : null)
+  const [chatUsers, setChatUsers] = useState([])
   const [chatMessage, setChatMessage] = useState("")
-  const [chatHistory, setChatHistory] = useState(messages)
+  const [chatHistory, setChatHistory] = useState([])
+
+  // Get users and messages
+  useEffect(() => {
+    axios.get('http://localhost:5000/api/users')
+      .then((response) => {
+        setChatUsers(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching users:', error);
+      });
+
+    // Call the /messages endpoint to fetch all messages
+    axios.get('http://localhost:5000/api/chat-messages')
+      .then((response) => {
+        setChatHistory(response.data.map(msg => {
+          return {...msg, 
+            user: {
+              ...msg.user,
+              isLoggedIn: msg.user.username === username
+            }
+          }
+        }));
+      })
+      .catch((error) => {
+        console.error('Error fetching messages:', error);
+      });
+  }, []);
 
   const onChatMessageChange = (e) => {
     setChatMessage(e.target.value)
   }
+
+  // Textarea send message
   const onChatMessageEnter = (e) => {
+    // Check if the user pressed enter and prevent default
     if (e.key === "Enter" && e.shiftKey == false) {
       e.preventDefault();
-      console.log(e.target.value);
-      setChatHistory([...chatHistory, {
-        key: chatHistory.length,
-        user: users[1],
-        time: "14:26",
-        date: "2023-07-27",
-        text: e.target.value
-      }])
-      setChatMessage("")
-      // return console.log(e.target.value);
+
+      axios.post('http://localhost:5000/api/send-message', { message: e.target.value }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+      })
+        .then(() => {
+          // Clear the textarea after sending the message
+          setChatMessage("")
+          // Refresh the chat messages after sending the message
+          axios.get('http://localhost:5000/api/chat-messages')
+            .then((response) => {
+              setChatHistory(response.data.map(msg => {
+                return {...msg, 
+                  user: {
+                    ...msg.user,
+                    isLoggedIn: msg.user.username === username
+                  }
+                }
+              }));
+            })
+            .catch((error) => {
+              console.error('Error fetching chat messages:', error);
+            });
+        })
+        .catch((error) => {
+          console.error('Error sending message:', error);
+        });
     }
   }
 
   return (
-    <div className="Chat flex w-full min-h-full">
+    <div className="Chat flex w-full h-full max-h-full">
       {/* Chat Container */}
       <div className="Chat-container container flex flex-row flex-1">
 
@@ -86,12 +87,14 @@ function Chat() {
           </div>
           {/* Chat List User */}
           <div className="Chat-list-user">
-            {users.map((user, index) => {
+            {chatUsers.map((user, index) => {
+              debugger
               return (
-                <div key={user.key} className={`Chat-user ${user.isLoggedIn && "Chat-user-online"} flex`}>
-                  <img className="Chat-user-image" src={user.image} />
+                <div key={user.id} className={`Chat-user flex`}>
+                  <img className="Chat-user-image" src={ user.online ? "../../media/images/profiles/ava.png" : "../../media/images/profiles/una.png"} />
                   <div className="Chat-user-details flex-1">
-                    <p className="Chat-user-name">{user.name}</p>
+                    <p className="Chat-user-name inline-block">{user.username}</p>
+                    <p className={`${user.online ? "Chat-user-online" : "Chat-user-offline"}`}></p>
                     <p className="Chat-user-last-msg">text text text...</p>
                   </div>
                 </div>
@@ -105,17 +108,19 @@ function Chat() {
         <div className="Chat-window w-full h-full px-5 flex flex-col justify-between">
           <div className="Chat-messages flex flex-col mt-5">
             {chatHistory.map((item, index) => {
-              const classNameContainer = item.user.isLoggedIn ? "flex flex-row-reverse Message-private lg:ml-24" : "flex flex-row lg:mr-24"
+              const user = chatUsers.find(user => user.id === item.userId)
+              const classNameContainer = item.user && item.user.isLoggedIn ? "flex flex-row-reverse Message-private lg:ml-24" : "flex flex-row lg:mr-24"
               // const classNameMessage =  item.user.isLoggedIn ? "lg:ml-24" : "lg:mr-24"
+              debugger
               return (
-                <div key={item.key} className={`Message-container ${classNameContainer}`}>
-                  <img className="Message-user-image hidden lg:flex" src={item.user.image} />
-                  <div className={`Message ${item.user.color} ${item.user.isLoggedIn ? "ml-8" : "mr-8"}`}>
+                <div key={item.id} className={`Message-container ${classNameContainer}`}>
+                  <img className="Message-user-image hidden lg:flex" src={item.user.isLoggedIn ? "../../media/images/profiles/ava.png" :"../../media/images/profiles/una.png" } />
+                  <div className={`Message ${item.user && item.user.isLoggedIn ? "bg-sky-400 ml-8" : "bg-yellow-500 mr-8"}`}>
                     <div className="Message-head">
-                      <div className="Message-user">{item.user.name}</div>
-                      <div className="Message-date">{item.time}</div>
+                      <div className="Message-user">{item.user.username}</div>
+                      <div className="Message-date">{item.timestamp}</div>
                     </div>
-                    <div className="Message-body">{item.text}</div>
+                    <div className="Message-body">{item.message}</div>
                   </div>
                 </div>
               )
@@ -129,8 +134,5 @@ function Chat() {
     </div>
   )
 }
-
-
-
 
 export default Chat
