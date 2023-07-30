@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { getUsers, getMessages, sendMessage } from "../../Ajax";
 
 function Chat(props) {
   const [username, setUsername] = useState(props.session ? props.session.username : null)
@@ -9,29 +10,9 @@ function Chat(props) {
 
   // Get users and messages
   useEffect(() => {
-    axios.get('http://localhost:5000/api/users')
-      .then((response) => {
-        setChatUsers(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching users:', error);
-      });
+    getUsers(setChatUsers)
+    getMessages(username, setChatHistory)
 
-    // Call the /messages endpoint to fetch all messages
-    axios.get('http://localhost:5000/api/chat-messages')
-      .then((response) => {
-        setChatHistory(response.data.map(msg => {
-          return {...msg, 
-            user: {
-              ...msg.user,
-              isLoggedIn: msg.user.username === username
-            }
-          }
-        }));
-      })
-      .catch((error) => {
-        console.error('Error fetching messages:', error);
-      });
   }, []);
 
   const onChatMessageChange = (e) => {
@@ -44,33 +25,7 @@ function Chat(props) {
     if (e.key === "Enter" && e.shiftKey == false) {
       e.preventDefault();
 
-      axios.post('http://localhost:5000/api/send-message', { message: e.target.value }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        }
-      })
-        .then(() => {
-          // Clear the textarea after sending the message
-          setChatMessage("")
-          // Refresh the chat messages after sending the message
-          axios.get('http://localhost:5000/api/chat-messages')
-            .then((response) => {
-              setChatHistory(response.data.map(msg => {
-                return {...msg, 
-                  user: {
-                    ...msg.user,
-                    isLoggedIn: msg.user.username === username
-                  }
-                }
-              }));
-            })
-            .catch((error) => {
-              console.error('Error fetching chat messages:', error);
-            });
-        })
-        .catch((error) => {
-          console.error('Error sending message:', error);
-        });
+      sendMessage(e.target.value, username, setChatMessage, setChatHistory)
     }
   }
 

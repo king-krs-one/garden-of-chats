@@ -6,7 +6,7 @@ import Header from './containers/layout/Header';
 import { useState, useEffect } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Chat, Contact, Login, Logout, Profile } from './containers/pages'
-import axios from 'axios';
+import { logoutUser } from './Ajax';
 
 const navigation = [
   { name: 'Home', href: '/', requiresAuth: false },
@@ -25,9 +25,8 @@ function App() {
   });
   const [prevLocation, setPrevLocation] = useState(null);
 
-
   useEffect(() => {
-    if (prevLocation && prevLocation.pathname !== "/login" && prevLocation.pathname !== "/logout") {
+    if (prevLocation && message && prevLocation.pathname !== "/login" && prevLocation.pathname !== "/logout") {
       setMessage(null)
     }
     setPrevLocation(location)
@@ -39,20 +38,14 @@ function App() {
   };
 
   const handleLogout = (data) => {
+    logoutUser(session ? session.username : null)
+
     // Perform logout logic and clear the user session state here
     setSession(null);
     setMessage(data.message)
     localStorage.removeItem('token')
     localStorage.removeItem('session')
-
-    axios.post('http://localhost:5000/logout', {username: session ? session.username : null})
-      .then((response) => {
-        console.log(response.data); 
-      })
-      .catch((error) => {
-        console.error('Error logging out:', error);
-      });
-  };
+  }
 
   const handleRegister = (data) => {
     setMessage(data.message)
