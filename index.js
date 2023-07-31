@@ -128,8 +128,6 @@ app.post('/api/send-message', verifyToken, (req, res) => {
     return res.status(401).json({ error: 'Not logged in' });
   }
 
-  // const { message } = req.body;
-
   if (!message || typeof message !== 'string') {
     return res.status(400).json({ error: 'Invalid message' });
   }
@@ -141,6 +139,7 @@ app.post('/api/send-message', verifyToken, (req, res) => {
     timestamp: new Date(),
   };
 
+  // This would be save normally in the database
   chatMessages.push(chatMessage);
 
   return res.status(200).json({ message: 'Message sent successfully' });
