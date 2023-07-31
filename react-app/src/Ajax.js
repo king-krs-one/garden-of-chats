@@ -1,11 +1,16 @@
 import axios from "axios";
+import config from './config';
+
+const apiUrl = config.apiUrl;
+console.log('----apiUrl-----------------------------------------------------------')
+console.log(config)
 
 ///// General Ajax Call 
 //////////////////////////////////////////////////
 
 const makeAjaxRequest = (url, method, data, callback) => {
   axios({
-    url: "http://localhost:5000" + url,
+    url: apiUrl + url,
     method: method,
     data: data
   })
@@ -21,7 +26,7 @@ const makeAjaxRequest = (url, method, data, callback) => {
 ///// Functional Ajax Calls - Login/logout
 //////////////////////////////////////////////////
 
-const logoutUser = (username) => axios.post('http://localhost:5000/logout', { username: username })
+const logoutUser = (username) => axios.post(apiUrl + '/logout', { username: username })
   .then((response) => {
     console.log(response.data);
   })
@@ -34,7 +39,7 @@ const logoutUser = (username) => axios.post('http://localhost:5000/logout', { us
 
 
 const getUsers = (callback) => {
-  axios.get('http://localhost:5000/api/users')
+  axios.get(apiUrl + '/api/users')
     .then((response) => {
       callback(response.data);
     })
@@ -43,7 +48,7 @@ const getUsers = (callback) => {
     });
 }
 
-const getMessages = (username, callback) => axios.get('http://localhost:5000/api/chat-messages')
+const getMessages = (username, callback) => axios.get(apiUrl + '/api/chat-messages')
   .then((response) => {
     callback(response.data.map(msg => {
       return {
@@ -61,7 +66,7 @@ const getMessages = (username, callback) => axios.get('http://localhost:5000/api
 
 
 // Send message to backend
-const sendMessage = (message, username, setMessage, callback) => axios.post('http://localhost:5000/api/send-message', { message: message }, {
+const sendMessage = (message, username, setMessage, callback) => axios.post(apiUrl + '/api/send-message', { message: message }, {
   headers: {
     Authorization: `Bearer ${localStorage.getItem('token')}`,
   }
@@ -70,7 +75,7 @@ const sendMessage = (message, username, setMessage, callback) => axios.post('htt
     // Clear the textarea after sending the message
     setMessage("")
     // Refresh the chat messages after sending the message
-    axios.get('http://localhost:5000/api/chat-messages')
+    axios.get(apiUrl + '/api/chat-messages')
       .then((response) => {
         callback(response.data.map(msg => {
           return {
