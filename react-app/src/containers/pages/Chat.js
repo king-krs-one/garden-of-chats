@@ -139,7 +139,7 @@ function Chat(props) {
               {/* Chat with users */}
               {chatUsers.map((chatUser, index) => {
                 return (
-                  <ChatUser onSelect={selectChatUser} user={chatUser} isPublic={false} receiver={chatUser.id} selected={chatReceiver.userId === chatUser.id} />
+                  <ChatUser onSelect={selectChatUser} key={index} user={chatUser} isPublic={false} receiver={chatUser.id} selected={chatReceiver.userId === chatUser.id} />
                 )
               })}
             </div>
@@ -150,7 +150,7 @@ function Chat(props) {
           <div className="Chat-window w-full h-full px-5 flex flex-col justify-between">
             <div ref={chatContainerRef} className="Chat-messages flex flex-col mt-5">
               {chatHistoryFiltered.map((item, index) => {
-                return <ChatMessage message={item} />
+                return <ChatMessage key={index} message={item} />
               })}
             </div>
             <div className="Chat-input">
