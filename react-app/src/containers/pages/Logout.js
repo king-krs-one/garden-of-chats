@@ -1,21 +1,25 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { logoutUser } from '../../Ajax';
 
-const Logout = ({ onLogout }) => {
+const Logout = (props) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Call handle logout function passed from App component
-    onLogout({
-      message: {
-        type: "warning",
-        // status: response.status,
-        text: "Logged out succesfully"
-      }
-    });
-    // Redirect the user to the login page after logout
-    navigate('/login');
-  }, [onLogout, navigate]);
+    // call async logoutUser with callback for error and response
+    logoutUser(props.user, (error, response) => {
+      props.onLogout(response)
+      // Redirect the user to the login page after logout
+      navigate('/login', { state: {
+          message: {
+            type: "warning",
+            // status: response.status,
+            text: "Logged out succesfully"
+          }
+        }
+      }, [])
+    })
+  })
 
   return null; // Render nothing
 };
@@ -27,7 +31,7 @@ export default Logout;
 
 
 
-/************************************************************** 
+/**************************************************************
  CODE BELOW CAN BE USED TO RENDER A CONFIRM LOGOUT
 ***************************************************************/
 

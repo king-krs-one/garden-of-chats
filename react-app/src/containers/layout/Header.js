@@ -10,8 +10,8 @@ import LogoTextWhite from '../../assets/images/logo_text_white.png'
 
 function Header(props) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const { navigation, session } = props
-  const navigationAuth = session ? navigation : [...navigation].filter(item => !item.requiresAuth)
+  const { navigation, user } = props
+  const navigationAuth = user ? navigation : [...navigation].filter(item => !item.requiresAuth)
 
   return (
     <header className="App-header sticky inset-x-0 top-0 z-50">
@@ -43,9 +43,9 @@ function Header(props) {
         </div>
         {/* App Profile */}
         <div className="App-profile hidden lg:flex lg:flex-1 lg:justify-end">
-          {session ?
+          {user ?
             <>
-              <div className='menuItem mr-4'>{session.username}</div>
+              <div className='menuItem mr-4'>{user.username}</div>
               <Link to="/logout" className='menuItem text-sm font-semibold leading-6' onClick={props.handleLogout}>Sign Out</Link>
             </>
             :
@@ -53,14 +53,14 @@ function Header(props) {
           }
         </div>
       </nav>
-      <SidePanel navigation={navigationAuth} setIsOpen={setMobileMenuOpen} isOpen={mobileMenuOpen} session={session} />
+      <SidePanel navigation={navigationAuth} setIsOpen={setMobileMenuOpen} isOpen={mobileMenuOpen} user={user} />
     </header>
   )
 }
 
 
 function SidePanel(props) {
-  const { navigation, isOpen, setIsOpen, session } = props
+  const { navigation, isOpen, setIsOpen, user } = props
 
   return (
     <Dialog as="div" className="App-panel lg:hidden" open={isOpen} onClose={setIsOpen}>
@@ -92,9 +92,9 @@ function SidePanel(props) {
             <Link key={item.name} to={item.href} className='menuItem'>{item.name}</Link>
           ))}
           <hr className='divider' />
-          {session ?
+          {user ?
             <>
-              <div className='menuItem mr-4'>{session.username}</div>
+              <div className='menuItem mr-4'>{user.username}</div>
               <Link to="/logout" className='menuItem text-sm font-semibold leading-6' onClick={props.handleLogout}>Sign Out</Link>
             </>
             :

@@ -1,9 +1,8 @@
 import axios from "axios";
 import config from './config';
+import jwt_decode from "jwt-decode";
 
 const apiUrl = config.apiUrl;
-console.log('----apiUrl-----------------------------------------------------------')
-console.log(config)
 
 ///// General Ajax Call 
 //////////////////////////////////////////////////
@@ -26,12 +25,25 @@ const makeAjaxRequest = (url, method, data, callback) => {
 ///// Functional Ajax Calls - Login/logout
 //////////////////////////////////////////////////
 
-const logoutUser = (username) => axios.post(apiUrl + '/logout', { username: username })
+const loginUser = (username, password, callback) => axios.post(apiUrl + '/login', {
+    username,
+    password,
+  })
   .then((response) => {
-    console.log(response.data);
+    callback(null, response.data);
   })
   .catch((error) => {
-    console.error('Error logging out:', error);
+    callback(error);
+  });
+
+const logoutUser = (username, callback) => axios.post(apiUrl + '/logout', { username: username })
+  .then((response) => {
+    console.log(response.data);    
+    callback(null, response.data);
+  })
+  .catch((error) => {
+    console.error('Error logging out:', error);    
+    callback(error);
   });
 
 ///// Specific Ajax Calls - Request/Send Data
@@ -53,6 +65,7 @@ const getMessages = (username, callback) => axios.get(apiUrl + '/api/chat-messag
     callback(response.data.map(msg => {
       return {
         ...msg,
+        isPublic: msg.type === "public",
         user: {
           ...msg.user,
           isLoggedIn: msg.user.username === username
@@ -66,33 +79,53 @@ const getMessages = (username, callback) => axios.get(apiUrl + '/api/chat-messag
 
 
 // Send message to backend
-const sendMessage = (message, username, setMessage, callback) => axios.post(apiUrl + '/api/send-message', { message: message }, {
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem('token')}`,
-  }
-})
-  .then(() => {
-    // Clear the textarea after sending the message
-    setMessage("")
-    // Refresh the chat messages after sending the message
-    axios.get(apiUrl + '/api/chat-messages')
-      .then((response) => {
-        callback(response.data.map(msg => {
-          return {
-            ...msg,
-            user: {
-              ...msg.user,
-              isLoggedIn: msg.user.username === username
-            }
-          }
-        }));
-      })
-      .catch((error) => {
-        console.error('Error fetching chat messages:', error);
-      });
+const sendMessage = (username, text, type, receiver, callback) => {
+  axios.post(apiUrl + '/api/send-message', { text, type, receiver }, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    }
   })
-  .catch((error) => {
-    console.error('Error sending message:', error);
-  });
+    .then(() => {
+      // Refresh the chat messages after sending the message
+      axios.get(apiUrl + '/api/chat-messages')
+        .then((response) => {
+          console.log(response)
+          callback(response.data);
+        })
+        .catch((error) => {
+          console.error('Error fetching chat messages:', error);
+        })
+    })
+    .catch((error) => {
+      console.error('Error sending message:', error);
+    })
+}
 
-export { getUsers, getMessages, sendMessage, logoutUser }
+const checkTokenValidity = async () => {
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    return null; // No token in local storage, user is not logged in
+  }
+
+  try {
+    const response = await axios.post(apiUrl + '/validateToken', { token });
+
+    // Token is valid, return the user
+    return response.data.user;
+  } catch (error) {
+    const decodedToken = jwt_decode(token);
+
+    // if the token is not valid/expired, we still want to log out the user in the backend,
+    // because otherwise the user is still listed as online 
+    // properly implemented, we should maybe try to refresh the token first
+    if (decodedToken.username) {
+      logoutUser(decodedToken.username)
+    }
+    // Token is invalid or expired, remove the token from local storage    
+    localStorage.removeItem('token');
+    return null;
+  }
+};
+
+export { getUsers, getMessages, sendMessage, loginUser, logoutUser, checkTokenValidity }

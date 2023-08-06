@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import config from '../../config';
+import { loginUser } from '../../Ajax';
+
+const apiUrl = config.apiUrl;
 
 function Login(props) {
 
@@ -24,38 +28,32 @@ function LoginForm(props) {
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
-    try {
-      const response = await axios.post('http://localhost:5000/login', {
-        username,
-        password,
-      });
-
-      const { message, token } = response.data;
-
-      // Store the token in local storage or a more secure method like cookies
-      localStorage.setItem("token", token);
-      localStorage.setItem("session", JSON.stringify({username, token}));
-
-      props.handleLogin({
-        username, password, token, message: {
-          type: "success",
-          status: response.status,
-          text: message
+      loginUser(username, password, (error, response) => {
+        if (!error){
+          const { message, user, token } = response;
+    
+          // Store the token in local storage or a more secure method like cookies
+          localStorage.setItem("token", token);
+    
+          props.handleLogin({ user, token });
+    
+          navigate('/', { state: {
+            message: {
+              type: "success",
+              text: message
+            }
+          }});
         }
-      });
-
-      navigate('/');
-    } catch (error) {
-      props.handleLogin({
-        username, password, message: {
-          type: "error",
-          status: error.response.status,
-          text: error.response.data.message
+        else {
+          navigate('/login', {state: {
+            message: {
+              type: "error",
+              text: error.response.data.message
+            }
+          }});
+          console.error(error);
         }
-      });
-
-      console.error(error);
-    }
+      })
   };
 
   return (
@@ -90,7 +88,7 @@ function RegisterForm(props) {
 
   const handleRegister = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/register', {
+      const response = await axios.post(apiUrl + '/api/register', {
         "username": username,
         "password": password,
       });
