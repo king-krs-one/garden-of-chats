@@ -20,13 +20,14 @@ function App() {
   const location = useLocation();
   const [message, setMessage] = useState(null);
   const [user, setUser] = useState(null)
-  const [prevLocation, setPrevLocation] = useState(null);
+  // const [prevLocation, setPrevLocation] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Check if the token in the localStorage is still valid
     const checkTokenAndSetUser = async () => {
       const user = await checkTokenValidity();
+      
       setUser(user);
       setLoading(false);
     };

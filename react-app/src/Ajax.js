@@ -120,7 +120,8 @@ const checkTokenValidity = async () => {
     // because otherwise the user is still listed as online 
     // properly implemented, we should maybe try to refresh the token first
     if (decodedToken.username) {
-      logoutUser(decodedToken.username)
+      // callback to be added, to check if logout was successfull
+      logoutUser(decodedToken.username, () => {})
     }
     // Token is invalid or expired, remove the token from local storage    
     localStorage.removeItem('token');
