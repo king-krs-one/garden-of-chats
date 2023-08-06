@@ -63,6 +63,6 @@
   color: darkslategrey;
 }
 
-.App-panel-menu .menuItem:hover {
+.App-panel-menu a.menuItem:hover {
   color: darkgray;
 }
