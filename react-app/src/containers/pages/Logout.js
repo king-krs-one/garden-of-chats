@@ -7,7 +7,7 @@ const Logout = (props) => {
 
   useEffect(() => {
     // call async logoutUser with callback for error and response
-    logoutUser(props.user, (error, response) => {
+    logoutUser(props.user.username, (error, response) => {
       props.onLogout(response)
       // Redirect the user to the login page after logout
       navigate('/login', { state: {

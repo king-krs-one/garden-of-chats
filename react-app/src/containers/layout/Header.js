@@ -46,7 +46,7 @@ function Header(props) {
           {user ?
             <>
               <div className='menuItem mr-4'>{user.username}</div>
-              <Link to="/logout" className='menuItem text-sm font-semibold leading-6' onClick={props.handleLogout}>Sign Out</Link>
+              <Link to="/logout" className='menuItem text-sm font-semibold leading-6'>Sign Out</Link>
             </>
             :
             <Link to="/login" className='menuItem text-sm font-semibold leading-6'>Sign In</Link>
@@ -95,7 +95,7 @@ function SidePanel(props) {
           {user ?
             <>
               <div className='menuItem mr-4'>{user.username}</div>
-              <Link to="/logout" className='menuItem text-sm font-semibold leading-6' onClick={props.handleLogout}>Sign Out</Link>
+              <Link to="/logout" className='menuItem text-sm font-semibold leading-6'>Sign Out</Link>
             </>
             :
             <Link to="/login" className='menuItem'>Login</Link>

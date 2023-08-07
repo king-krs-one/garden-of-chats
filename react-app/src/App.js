@@ -68,9 +68,10 @@ function App() {
   if (loading) {
     return <div>Loading...</div>;
   }
+
   return (
     <div className="App h-full flex flex-col" >
-      <Header navigation={navigation} user={user} handleLogout={handleLogout} />
+      <Header navigation={navigation} user={user} />
       {message && <div className={`w-full alert alert-${message.type}`}>{message.text}</div>}
       <main className='App-main w-full flex-1'>
         <Routes>
