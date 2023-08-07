@@ -125,7 +125,7 @@ function Chat(props) {
       {user ? (
         <div className="Chat-container max-w-screen-2xl flex flex-row flex-1">
           {/* Chat Sidebar */}
-          < div className="Chat-sidebar hidden md:flex flex-col w-2/5 overflow-y-auto">
+          < div className="Chat-sidebar border-r hidden md:flex flex-col w-2/5 overflow-y-auto">
             {/* Chat Search */}
             <div className="Chat-search py-4 px-2">
               <input type="text" placeholder="search chatting" className="input-field" />
@@ -157,6 +157,11 @@ function Chat(props) {
               <textarea value={chatMessage} onChange={updateChatMessage} className="input-field" rows="3" onKeyPress={sendChatMessage} ></textarea>
             </div>
           </div>
+
+          < div className="Chat-sidebar border-l hidden md:flex flex-col w-2/5 overflow-y-auto">
+            <ChatUserProfile user={user} />
+          </div>
+
         </div>
       ) :
         <></>
@@ -177,7 +182,7 @@ function ChatUser(props) {
   return (
     <div onClick={() => onSelect(isPublic, receiver)} key={user ? user.id : false} className={`Chat-user ${selected ? "selected" : ""} flex`}>
       <span className="Chat-user-image">
-        {isPublic ? publicImg : <img className="Chat-user-image" src={user.image} alt="user image" />}
+        {isPublic ? publicImg : <img className="Chat-user-image w-16" src={user.image} alt="user image" />}
       </span>
 
       <div className="Chat-user-details flex-1">
@@ -203,6 +208,18 @@ function ChatMessage(props) {
         </div>
         <div className="Message-body">{message.text}</div>
       </div>
+    </div>
+  )
+}
+
+
+function ChatUserProfile(props) {
+  const { user } = props
+  
+  return (
+    <div className="Chat-profile">
+      <img className="Chat-profile-image" src={user.image} alt="profile image" />
+      <h3 className="text-center uppercase">{user.username}</h3>
     </div>
   )
 }
